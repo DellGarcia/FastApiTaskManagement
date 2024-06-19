@@ -103,7 +103,7 @@ ou atualizada.
 
 Implemente conforme o diagrama de objetos abaixo:
 
-![diagrama.png](diagrama.png)
+![diagrama.png](images/diagrama.png)
 
 ### Documentação OpenAPI
 
