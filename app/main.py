@@ -3,24 +3,18 @@ from fastapi import HTTPException
 from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.responses import RedirectResponse, JSONResponse
 
-#from app.configs.log_config import setup_logging
 from app.controllers.task_controller import task_router
 
-#logger = setup_logging()
-
-#logger.info('Starting application')
-
 app = FastAPI(
-    title="Users API",
-    description="API para gerenciamento de usuários",
+    title="Task API",
+    description="API para gerenciamento de tarefas",
     version="1.0.0",
     openapi_url="/openapi.json",
     docs_url=None,
     redoc_url=None,
     contact={
-        "name": "Luan Fernandes",
-        "email": "souluanf@icloud.com",
-        "url": "https://luanfernandes.dev"
+        "name": "Lucas Garcia",
+        "email": "lucas.garcia15@fatec.sp.gov.br"
     },
     license_info={
         "name": "MIT",
@@ -30,10 +24,6 @@ app = FastAPI(
         {
             "url": "http://localhost:8000",
             "description": "Development server"
-        },
-        {
-            "url": "https://users.luanfernandes.dev",
-            "description": "Production server"
         }
     ],
 )
