@@ -9,7 +9,7 @@ class TaskModel(Base):
     title = Column(String(50))
     description = Column(String(250))
     status = Column(String(250))
-    created_at = DateTime()
+    created_at = Column(DateTime)
 
 
 Base.metadata.drop_all(bind=engine)
