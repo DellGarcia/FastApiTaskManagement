@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, Header
 from sqlalchemy.orm import Session
 
@@ -16,16 +18,16 @@ def get_task_repo(db: Session = Depends(get_db)) -> TaskRepository:
 @task_router.post("/", status_code=201, description="Busca todos as tarefas", response_model=TaskDTO)
 def create(request: TaskCreateDTO,
            task_repo: TaskRepository = Depends(get_task_repo)):
-
+    request.created_at = datetime.now()
     task_service = TaskService(task_repo)
-    return task_service.create_user(request)
+    return task_service.create_task(request)
 
 
 @task_router.get("/{task_id}", status_code=200, description="Busca uma tarefa pelo ID", response_model=TaskDTO)
 def find_by_id(task_id: int, task_repo: TaskRepository = Depends(get_task_repo)):
 
     task_service = TaskService(task_repo)
-    return task_service.read_user(task_id)
+    return task_service.read_task(task_id)
 
 
 @task_router.get("/", status_code=200, description="Busca todos as tarefas", response_model=list[TaskDTO])
@@ -39,11 +41,11 @@ def find_all(task_repo: TaskRepository = Depends(get_task_repo)):
 def update(task_id: int, request: TaskUpdateDTO, task_repo: TaskRepository = Depends(get_task_repo)):
 
     task_service = TaskService(task_repo)
-    return task_service.update_user(task_id, request)
+    return task_service.update_task(task_id, request)
 
 
 @task_router.delete("/{task_id}", status_code=204, description="Deleta uma tarefa")
 def delete(task_id: int, task_repo: TaskRepository = Depends(get_task_repo)):
 
     task_service = TaskService(task_repo)
-    task_service.delete_user(task_id)
+    task_service.delete_task(task_id)

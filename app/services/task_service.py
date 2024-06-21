@@ -13,64 +13,68 @@ logger = logging.getLogger("fastapi")
 
 class ITaskService:
 
-    def create_user(self, user_data: object):
+    def create_task(self, task_data: object):
         raise NotImplementedError
 
-    def read_user(self, user_id: int):
+    def read_task(self, task_id: int):
         raise NotImplementedError
 
-    def update_user(self, user_id: int, user_update: object):
+    def update_task(self, task_id: int, task_update: object):
         raise NotImplementedError
 
-    def delete_user(self, user_id: int):
+    def delete_task(self, task_id: int):
         raise NotImplementedError
 
 
 class TaskService(ITaskService):
 
-    def __init__(self, user_repository: ITaskRepository):
-        self.user_repository = user_repository
+    def __init__(self, task_repository: ITaskRepository):
+        self.task_repository = task_repository
 
-    def create_user(self, user_data: TaskCreateDTO) -> TaskDTO:
-        user = TaskModel(**user_data.model_dump())
+    def create_task(self, task_data: TaskCreateDTO) -> TaskDTO:
+        task = TaskModel(**task_data.model_dump())
         try:
-            logger.info("Creating user: %s", user)
-            created_user = self.user_repository.create(user)
+            logger.info("Creating task: %s", task)
+            created_task = self.task_repository.create(task)
         except IntegrityError as e:
-            logger.error("Error creating user: %s. Detail: %s", user, e)
+            logger.error("Error creating task: %s. Detail: %s", task, e)
             raise HTTPException(status_code=409, detail=f"Task already exists. Error: {e.args[0]}")
-        return TypeAdapter(TaskDTO).validate_python(created_user)
+        return TypeAdapter(TaskDTO).validate_python(created_task)
 
-    def read_user(self, user_id: int) -> TaskDTO:
-        logger.info("Reading user with id %s", user_id)
-        user = self.user_repository.read(user_id)
-        if user is None:
-            logger.error("TaskModel with id %s not found", user_id)
+    def read_task(self, task_id: int) -> TaskDTO:
+        logger.info("Reading task with id %s", task_id)
+        task = self.task_repository.read(task_id)
+
+        if task is None:
+            logger.error("TaskModel with id %s not found", task_id)
             raise HTTPException(status_code=404, detail="Task not found")
-        return TypeAdapter(TaskDTO).validate_python(user)
+
+        return TypeAdapter(TaskDTO).validate_python(task)
 
     def find_all(self) -> list[TaskDTO]:
-        logger.info("Finding all users")
-        users = self.user_repository.find_all()
-        return [TypeAdapter(TaskDTO).validate_python(user) for user in users]
+        logger.info("Finding all tasks")
+        tasks = self.task_repository.find_all()
+        print(tasks)
 
-    def update_user(self, user_id: int, user_data: TaskUpdateDTO) -> TaskDTO:
-        logger.info("Updating user with id %s", user_id)
-        user = self.user_repository.read(user_id)
-        if user is None:
-            logger.error("Task with id %s not found", user_id)
-            raise HTTPException(status_code=404, detail="TaskModel not found")
-        user_data = user_data.model_dump(exclude_unset=True)
-        for key, value in user_data.items():
-            setattr(user, key, value)
-        updated_user = self.user_repository.update(user, user_data)
-        return TypeAdapter(TaskDTO).validate_python(updated_user)
+        return [TypeAdapter(TaskDTO).validate_python(task) for task in tasks]
 
-    def delete_user(self, user_id: int) -> int:
-        logger.info("Deleting user with id %s", user_id)
-        user = self.user_repository.read(user_id)
-        if user is None:
-            logger.error("Task with id %s not found", user_id)
+    def update_task(self, task_id: int, task_data: TaskUpdateDTO) -> TaskDTO:
+        logger.info("Updating task with id %s", task_id)
+        task = self.task_repository.read(task_id)
+        if task is None:
+            logger.error("Task with id %s not found", task_id)
             raise HTTPException(status_code=404, detail="TaskModel not found")
-        delete_id = self.user_repository.delete(user)
+        task_data = task_data.model_dump(exclude_unset=True)
+        for key, value in task_data.items():
+            setattr(task, key, value)
+        updated_task = self.task_repository.update(task, task_data)
+        return TypeAdapter(TaskDTO).validate_python(updated_task)
+
+    def delete_task(self, task_id: int) -> int:
+        logger.info("Deleting task with id %s", task_id)
+        task = self.task_repository.read(task_id)
+        if task is None:
+            logger.error("Task with id %s not found", task_id)
+            raise HTTPException(status_code=404, detail="TaskModel not found")
+        delete_id = self.task_repository.delete(task)
         return delete_id

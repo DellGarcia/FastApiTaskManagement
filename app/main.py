@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi import HTTPException
 from fastapi.openapi.docs import get_swagger_ui_html
 from starlette.responses import RedirectResponse, JSONResponse
-
 from app.controllers.task_controller import task_router
 
 app = FastAPI(

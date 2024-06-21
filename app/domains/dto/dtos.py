@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel, field_validator, ConfigDict
+from typing import Optional
 
 
 class Validate:
@@ -19,17 +20,20 @@ class TaskDTO(BaseModel):
     title: str
     description: str
     status: str
-    created_at: datetime
+    created_at: Optional[datetime]
+
+    @field_validator('status')
+    def validate_status(cls, status):
+        return Validate.status(status)
 
 
 class TaskCreateDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
     title: str
     description: str
     status: str
-    created_at: datetime
+    created_at: Optional[datetime] = None
 
     @field_validator('status')
     def validate_status(cls, status):
@@ -39,11 +43,10 @@ class TaskCreateDTO(BaseModel):
 class TaskUpdateDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    name: str
-    title: str
-    description: str
-    status: str
-    created_at: datetime
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    created_at: Optional[datetime] = None
 
     @field_validator('status')
     def validate_status(cls, status):
